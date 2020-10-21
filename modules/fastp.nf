@@ -7,7 +7,7 @@ process fastp {
 
     output:
     tuple val(sample_id), path("${sample_id}_R1.trim.fastq.gz"), path("${sample_id}_R2.trim.fastq.gz")
-    path("${sample_id}.fastp.json")
+    tuple val(sample_id), path("${sample_id}.fastp.json")
     
 
     script:
