@@ -1,14 +1,25 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
-
 import argparse
 import csv
+import collections
 import json
 import os
 import sys
 
 from pprint import pprint
+
+def parse_alleles_file(alleles_file_path, locus_allele_delimiter):
+    """
+    Take the '.name' file from kma database and return all locus names
+    """
+    loci = set()
+    with open(alleles_file_path, 'r') as f:
+        for line in f:
+            locus = line.strip().split(locus_allele_delimiter)[0]
+            loci.add(locus)
+    loci = sorted(list(loci))
+    return loci
 
 def parse_res_file(res_file_path, locus_allele_delimiter):
     
@@ -68,8 +79,10 @@ def parse_res_file(res_file_path, locus_allele_delimiter):
 
 def main(args):
 
+    all_loci = parse_alleles_file(args.alleles, args.locus_allele_delimiter)
+
     loci = parse_res_file(args.res, args.locus_allele_delimiter)
-    print("\t".join([
+    print(",".join([
         "locus_id",
         "allele_id",
         "template_identity",
@@ -77,21 +90,44 @@ def main(args):
         "depth",
         ]))
 
-    for locus, alleles in loci.items():
-        best_allele = sorted(alleles.values(),
-                             key=lambda x: x['score'], reverse=True)[0]['allele_id']
+    mlst_output = collections.OrderedDict()
+    mlst_output['sample_id'] = args.sample_id
 
-        print("\t".join([
-            alleles[best_allele]['locus_id'],
-            alleles[best_allele]['allele_id'],
-            str(alleles[best_allele]['template_identity']),
-            str(alleles[best_allele]['template_coverage']),
-            str(alleles[best_allele]['depth']),
-        ]))
+    for locus in all_loci:
+        if locus in loci:
+            alleles = loci[locus]
+            best_allele = sorted(alleles.values(),
+                                 key=lambda x: x['score'], reverse=True)[0]['allele_id']
+
+            print(",".join([
+                alleles[best_allele]['locus_id'],
+                alleles[best_allele]['allele_id'],
+                str(alleles[best_allele]['template_identity']),
+                str(alleles[best_allele]['template_coverage']),
+                str(alleles[best_allele]['depth']),
+            ]))
+
+            if alleles[best_allele]['template_identity'] == 100 and alleles[best_allele]['template_coverage'] == 100:
+                mlst_output[alleles[best_allele]['locus_id']] = alleles[best_allele]['allele_id']
+            else:
+                mlst_output[alleles[best_allele]['locus_id']] = '-'
+        else:
+                mlst_output[locus] = '-'
+
+
+    with open(args.o, 'w') as f:
+        fieldnames = ['sample_id'] + all_loci
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow(mlst_output)
+        
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--res", dest="res", help="KMA result overview file")
-    parser.add_argument("--locus_allele_delimiter", help="Delimiter separating locus id from allele id", default='_')
+    parser.add_argument("res", help="KMA result overview file")
+    parser.add_argument("--locus-allele-delimiter", help="Delimiter separating locus id from allele id", default='_')
+    parser.add_argument("-s", "--sample-id", help="Sample ID", default='unknown')
+    parser.add_argument("-a", "--alleles", help="List of all alleles")
+    parser.add_argument("-o")
     args = parser.parse_args()
     main(args)
