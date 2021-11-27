@@ -15,17 +15,15 @@ if (params.profile){
 }
 
 workflow {
-    Channel.fromFilePairs( "${params.fastq_input}/*_{1,2}*.fastq.gz", type: 'file', maxDepth: 1 ).set{ ch_fastq_input }
-    Channel.fromPath( "${params.scheme}").set{ ch_scheme }
+    ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it[1], it[2]] }.unique{ it -> it[0] }
+    ch_scheme = Channel.fromPath( "${params.scheme}")
     
     main:
-      fastp(ch_fastq_input)
+      fastp(ch_fastq)
 
-      parse_fastp_json(fastp.out[1])
+      parse_fastp_json(fastp.out.json)
 
-      combine_parsed_fastp_reports(parse_fastp_json.out.collect())
-
-      kma_align(fastp.out[0].combine(ch_scheme))
+      kma_align(fastp.out.trimmed_reads.combine(ch_scheme))
 
       kma_result_to_mlst(kma_align.out.combine(ch_scheme))
 

@@ -1,9 +1,10 @@
 process count_called_alleles {
+
     tag { sample_id }
 
     executor 'local'
 
-    publishDir "${params.outdir}", pattern: "${sample_id}_called_allele_count.csv", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_called_allele_count.csv", mode: 'copy'
 
     input:
     tuple val(sample_id), path(cgmlst)

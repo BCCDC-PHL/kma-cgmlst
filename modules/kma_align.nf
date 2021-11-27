@@ -1,7 +1,9 @@
 process kma_align {
 
     tag { sample_id }
-    publishDir "${params.outdir}", pattern: "${sample_id}.kma.res", mode: 'copy'
+
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}.kma.res", mode: 'copy'
+
     input:
     tuple val(sample_id), path(read_1), path(read_2), val(scheme)
 
