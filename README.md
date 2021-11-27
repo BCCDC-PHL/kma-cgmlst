@@ -3,6 +3,13 @@
 ## Usage
 
 ### Preparing your cgMLST scheme
+First, prepare a single multi-fasta file containing all alleles. The [pubmlst_client](https://github.com/Public-Health-Bioinformatics/pubmlst_client)
+tool may be helpful for finding and downloading MLST schemes.
+
+Index the fasta using `kma`:
+```
+kma index -i <your_scheme.fa> -o <your_scheme>
+```
 
 ### Running the pipeline
 
