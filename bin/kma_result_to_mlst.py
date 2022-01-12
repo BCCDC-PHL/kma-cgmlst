@@ -39,7 +39,7 @@ def parse_res_file(res_file_path, locus_allele_delimiter):
     
     with open(res_file_path, 'r') as f:
         loci = {}
-        reader = csv.DictReader(f, fieldnames=res_fieldnames, dialect="excel-tab")
+        reader = csv.DictReader(f, fieldnames=res_fieldnames)
         next(reader) #skip header
         for row in reader:
             locus, allele = map(str.strip, row['template'].rsplit(locus_allele_delimiter, 1))

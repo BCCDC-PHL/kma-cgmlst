@@ -2,13 +2,13 @@ process kma_align {
 
     tag { sample_id }
 
-    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}.kma.res", mode: 'copy'
+    publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_kma.csv", mode: 'copy'
 
     input:
     tuple val(sample_id), path(read_1), path(read_2), val(scheme)
 
     output:
-    tuple val(sample_id), path("${sample_id}.kma.res")
+    tuple val(sample_id), path("${sample_id}_kma.csv")
 
     script:
     """
@@ -26,5 +26,7 @@ process kma_align {
       -o ${sample_id}.kma \
       -t_db ${scheme} \
       -ipe ${read_1} ${read_2}
+    cat ${sample_id}.kma.res | awk '\$1 ~ /^#/ {print substr(tolower(\$0), 2)}; \$1 ~ !/^#/ {print \$0}' \
+      | tr -d ' ' | tr \$'\\t' ',' > ${sample_id}_kma.csv
     """
 }
