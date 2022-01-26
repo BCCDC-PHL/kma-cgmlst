@@ -6,17 +6,24 @@ process kma_align {
 
     input:
     tuple val(sample_id), path(read_1), path(read_2), val(scheme)
-
+ 
     output:
     tuple val(sample_id), path("${sample_id}_kma.csv")
 
     script:
+    if (params.tmp){
+       kmaCmd = "kma -tmp ${params.tmp}"
+    } else {
+       kmaCmd = "kma"
+    }
+
     """
     ln -s ${scheme}.comp.b .
     ln -s ${scheme}.length.b .
     ln -s ${scheme}.name .
     ln -s ${scheme}.seq.b .
-    kma \
+    
+    ${kmaCmd} \
       -t ${task.cpus} \
       -cge \
       -boot \
