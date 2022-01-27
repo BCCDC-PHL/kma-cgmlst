@@ -25,6 +25,5 @@ kma index -i <your_scheme.fa> -o <your_scheme>
 nextflow run BCCDC-PHL/kma-cgmlst \
   --fastq_input </path/to/fastqs> \
   --scheme </path/to/cgmlst_scheme> \
-  --outdir </path/to/output_dir> \
-  --tmp </path/to/tmp_folder_for_kma_align> 
+  --outdir </path/to/output_dir> 
 ```

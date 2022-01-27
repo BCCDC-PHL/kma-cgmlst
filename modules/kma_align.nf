@@ -11,11 +11,6 @@ process kma_align {
     tuple val(sample_id), path("${sample_id}_kma.csv")
 
     script:
-    if (params.tmp){
-       kmaCmd = "kma -tmp ${params.tmp}"
-    } else {
-       kmaCmd = "kma"
-    }
 
     """
     ln -s ${scheme}.comp.b .
@@ -23,7 +18,7 @@ process kma_align {
     ln -s ${scheme}.name .
     ln -s ${scheme}.seq.b .
     
-    ${kmaCmd} \
+    kma \
       -t ${task.cpus} \
       -cge \
       -boot \
@@ -32,7 +27,8 @@ process kma_align {
       -and \
       -o ${sample_id}.kma \
       -t_db ${scheme} \
-      -ipe ${read_1} ${read_2}
+      -ipe ${read_1} ${read_2} \
+      -tmp .
     cat ${sample_id}.kma.res | awk '\$1 ~ /^#/ {print substr(tolower(\$0), 2)}; \$1 ~ !/^#/ {print \$0}' \
       | tr -d ' ' | tr \$'\\t' ',' > ${sample_id}_kma.csv
     """
