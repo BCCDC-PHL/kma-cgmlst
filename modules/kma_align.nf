@@ -6,12 +6,11 @@ process kma_align {
 
     input:
     tuple val(sample_id), path(read_1), path(read_2), val(scheme)
- 
+
     output:
     tuple val(sample_id), path("${sample_id}_kma.csv")
 
     script:
-
     """
     ln -s ${scheme}.comp.b .
     ln -s ${scheme}.length.b .
