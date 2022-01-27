@@ -16,6 +16,7 @@ process kma_align {
     ln -s ${scheme}.length.b .
     ln -s ${scheme}.name .
     ln -s ${scheme}.seq.b .
+    
     kma \
       -t ${task.cpus} \
       -cge \
@@ -25,7 +26,8 @@ process kma_align {
       -and \
       -o ${sample_id}.kma \
       -t_db ${scheme} \
-      -ipe ${read_1} ${read_2}
+      -ipe ${read_1} ${read_2} \
+      -tmp .
     cat ${sample_id}.kma.res | awk '\$1 ~ /^#/ {print substr(tolower(\$0), 2)}; \$1 ~ !/^#/ {print \$0}' \
       | tr -d ' ' | tr \$'\\t' ',' > ${sample_id}_kma.csv
     """
