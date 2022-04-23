@@ -26,8 +26,6 @@ workflow {
     main:
       fastp(ch_fastq)
 
-      parse_fastp_json(fastp.out.json)
-
       kma_align(fastp.out.trimmed_reads.combine(ch_scheme))
 
       kma_result_to_mlst(kma_align.out.combine(ch_scheme))
