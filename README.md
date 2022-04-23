@@ -45,3 +45,14 @@ nextflow run BCCDC-PHL/kma-cgmlst \
   --scheme </path/to/cgmlst_scheme> \
   --outdir </path/to/output_dir> 
 ```
+
+If the `--versioned_outdir` flag is added, then results will be stored within a directory
+named `kma-cgmlst-vX.Y-output`, where `X.Y` is the major/minor version of the pipeline:
+
+```
+nextflow run BCCDC-PHL/kma-cgmlst \
+  --samplesheet_input </path/to/samplesheet.csv> \
+  --scheme </path/to/cgmlst_scheme> \
+  --versioned_outdir \
+  --outdir </path/to/output_dir> 
+```
