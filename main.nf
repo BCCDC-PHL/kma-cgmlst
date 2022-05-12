@@ -29,5 +29,5 @@ workflow {
 
       kma_result_to_mlst(kma_align.out.combine(ch_scheme))
 
-      count_called_alleles(kma_result_to_mlst.out)
+      count_called_alleles(kma_result_to_mlst.out.mlst)
 }
