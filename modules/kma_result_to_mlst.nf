@@ -9,7 +9,8 @@ process kma_result_to_mlst {
     tuple val(sample_id), path(kma_result), val(scheme)
 
     output:
-    tuple val(sample_id), path("${sample_id}_cgmlst.csv"), path("${sample_id}_locus_qc.csv")
+    tuple val(sample_id), path("${sample_id}_cgmlst.csv"), emit: mlst
+    tuple val(sample_id), path("${sample_id}_locus_qc.csv"), emit: mlst_qc
     
     script:
     """
