@@ -16,6 +16,7 @@ process fastp {
     """
     fastp \
       -t ${task.cpus} \
+      --cut_tail \
       -i ${reads_1} \
       -I ${reads_2} \
       -o ${sample_id}_R1.trim.fastq.gz \

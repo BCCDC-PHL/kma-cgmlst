@@ -2,13 +2,14 @@ process kma_align {
 
     tag { sample_id }
 
-    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.pipeline_minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_kma.csv", mode: 'copy'
+    publishDir params.versioned_outdir ? "${params.outdir}/${sample_id}/${params.pipeline_short_name}-v${params.pipeline_minor_version}-output" : "${params.outdir}/${sample_id}", pattern: "${sample_id}_kma*.{c,t}sv", mode: 'copy'
 
     input:
     tuple val(sample_id), path(read_1), path(read_2), val(scheme)
 
     output:
-    tuple val(sample_id), path("${sample_id}_kma.csv")
+    tuple val(sample_id), path("${sample_id}_kma.csv"), emit: res
+    tuple val(sample_id), path("${sample_id}_kma_mapstat.tsv"), emit: mapstat
 
     script:
     """
@@ -19,6 +20,7 @@ process kma_align {
     
     kma \
       -t ${task.cpus} \
+      -ef \
       -cge \
       -boot \
       -1t1 \
@@ -31,5 +33,7 @@ process kma_align {
 
     head -n 1 ${sample_id}.kma.res | tr -d '#' | awk '{print tolower(\$0)}' | tr \$'\\t' ',' > ${sample_id}_kma.csv
     tail -qn+2 ${sample_id}.kma.res | tr -d ' ' | tr \$'\\t' ',' >> ${sample_id}_kma.csv
+
+    mv ${sample_id}.kma.mapstat ${sample_id}_kma_mapstat.tsv
     """
 }
