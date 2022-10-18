@@ -107,7 +107,7 @@ def main(args):
                 str(alleles[best_allele]['depth']),
             ]))
 
-            if alleles[best_allele]['template_identity'] == 100 and alleles[best_allele]['template_coverage'] == 100:
+            if alleles[best_allele]['template_identity'] >= args.min_identity and alleles[best_allele]['template_coverage'] >= args.min_coverage:
                 mlst_output[alleles[best_allele]['locus_id']] = alleles[best_allele]['allele_id']
             else:
                 mlst_output[alleles[best_allele]['locus_id']] = '-'
@@ -115,7 +115,7 @@ def main(args):
                 mlst_output[locus] = '-'
 
 
-    with open(args.o, 'w') as f:
+    with open(args.output, 'w') as f:
         fieldnames = ['sample_id'] + all_loci
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -128,6 +128,8 @@ if __name__ == '__main__':
     parser.add_argument("--locus-allele-delimiter", help="Delimiter separating locus id from allele id", default='_')
     parser.add_argument("-s", "--sample-id", help="Sample ID", default='unknown')
     parser.add_argument("-a", "--alleles", help="List of all alleles")
-    parser.add_argument("-o")
+    parser.add_argument("-i", "--min-identity", type=float, default=100.0, help="Minimum identity to consider an allele match")
+    parser.add_argument("-c", "--min-coverage", type=float, default=100.0, help="Minimum coverage to consider an allele match")
+    parser.add_argument("-o", "--output", help="Output")
     args = parser.parse_args()
     main(args)

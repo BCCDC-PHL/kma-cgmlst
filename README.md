@@ -24,9 +24,13 @@ kma index -i <your_scheme.fa> -o <your_scheme>
 ```
 nextflow run BCCDC-PHL/kma-cgmlst \
   --fastq_input </path/to/fastqs> \
+  [--min_identity <min_percent_identity>] \
+  [--min_coverage <min_percent_coverage>] \
   --scheme </path/to/cgmlst_scheme> \
   --outdir </path/to/output_dir> 
 ```
+
+The `--min_identity` and `--min_coverage` flags can be used to control the identity and coverage thresholds that are used to call an allele. They both default to 100% if the flags are omitted.
 
 Alternatively, a `samplesheet.csv` file can be provided, with fields: `ID`,`R1`,`R2`:
 

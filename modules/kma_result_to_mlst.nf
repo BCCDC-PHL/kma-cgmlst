@@ -20,6 +20,8 @@ process kma_result_to_mlst {
       --alleles ${scheme}.name \
       --sample-id "${sample_id}" \
       --locus-allele-delimiter "_" \
+      --min-identity ${params.min_identity} \
+      --min-coverage ${params.min_coverage} \
       -o ${sample_id}_cgmlst.csv \
       > ${sample_id}_locus_qc.csv
     """
