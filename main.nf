@@ -2,11 +2,11 @@
 
 nextflow.enable.dsl = 2
 
-include { fastp } from './modules/fastp.nf'
+include { fastp }                        from './modules/fastp.nf'
 include { combine_parsed_fastp_reports } from './modules/combine_parsed_fastp_reports.nf'
-include { kma_align } from './modules/kma_align.nf'
-include { kma_result_to_mlst } from './modules/kma_result_to_mlst.nf'
-include { count_called_alleles } from './modules/count_called_alleles.nf'
+include { kma_align }                    from './modules/kma_align.nf'
+include { kma_result_to_mlst }           from './modules/kma_result_to_mlst.nf'
+include { count_called_alleles }         from './modules/count_called_alleles.nf'
 
 if (params.profile){
     println("Profile should have a single dash: -profile")
@@ -27,7 +27,7 @@ workflow {
 
       kma_align(fastp.out.trimmed_reads.combine(ch_scheme))
 
-      kma_result_to_mlst(kma_align.out.combine(ch_scheme))
+      kma_result_to_mlst(kma_align.out.res.combine(ch_scheme))
 
       count_called_alleles(kma_result_to_mlst.out.mlst)
 }
