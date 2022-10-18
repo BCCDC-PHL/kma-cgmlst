@@ -29,7 +29,7 @@ process kma_align {
       -ipe ${read_1} ${read_2} \
       -tmp .
 
-    head -n 1 ${sample_id}.kma.res | tr -d '#' | awk '{print tolower(\$0)}' > ${sample_id}_kma.csv
+    head -n 1 ${sample_id}.kma.res | tr -d '#' | awk '{print tolower(\$0)}' | tr \$'\\t' ',' > ${sample_id}_kma.csv
     tail -qn+2 ${sample_id}.kma.res | tr -d ' ' | tr \$'\\t' ',' >> ${sample_id}_kma.csv
     """
 }
