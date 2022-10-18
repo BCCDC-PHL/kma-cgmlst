@@ -28,7 +28,8 @@ process kma_align {
       -t_db ${scheme} \
       -ipe ${read_1} ${read_2} \
       -tmp .
-    cat ${sample_id}.kma.res | awk '\$1 ~ /^#/ {print substr(tolower(\$0), 2)}; \$1 ~ !/^#/ {print \$0}' \
-      | tr -d ' ' | tr \$'\\t' ',' > ${sample_id}_kma.csv
+
+    head -n 1 ${sample_id}.kma.res | tr -d '#' | awk '{print tolower(\$0)}' > ${sample_id}_kma.csv
+    tail -qn+2 ${sample_id}.kma.res | tr -d ' ' | tr \$'\\t' ',' >> ${sample_id}_kma.csv
     """
 }
