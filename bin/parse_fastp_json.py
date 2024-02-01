@@ -14,19 +14,23 @@ def parse_fastp_json(path_to_fastp_json):
 
 def flatten_and_select_fields_from_summary(parsed_fastp):
     summary = {}
-    # TODO: re-write this as a loop that iterates through parsed_fastp['summary']
-    summary['total_reads_before_filtering'] = parsed_fastp['summary']['before_filtering']['total_reads']
-    summary['total_bases_before_filtering'] = parsed_fastp['summary']['before_filtering']['total_bases']
-    summary['q20_bases_before_filtering'] = parsed_fastp['summary']['before_filtering']['q20_bases']
-    summary['q30_bases_before_filtering'] = parsed_fastp['summary']['before_filtering']['q30_bases']
-    summary['q20_rate_before_filtering'] = parsed_fastp['summary']['before_filtering']['q20_rate']
-    summary['q30_rate_before_filtering'] = parsed_fastp['summary']['before_filtering']['q30_rate']
-    summary['total_reads_after_filtering'] = parsed_fastp['summary']['after_filtering']['total_reads']
-    summary['total_bases_after_filtering'] = parsed_fastp['summary']['after_filtering']['total_bases']
-    summary['q20_bases_after_filtering'] = parsed_fastp['summary']['after_filtering']['q20_bases']
-    summary['q30_bases_after_filtering'] = parsed_fastp['summary']['after_filtering']['q30_bases']
-    summary['q20_rate_after_filtering'] = parsed_fastp['summary']['after_filtering']['q20_rate']
-    summary['q30_rate_after_filtering'] = parsed_fastp['summary']['after_filtering']['q30_rate']
+
+    before_after_filtering = [
+        'before_filtering',
+        'after_filtering'
+    ]
+    metrics = [
+        'total_reads',
+        'total_bases',
+        'q20_bases',
+        'q30_bases',
+        'q20_rate',
+        'q30_rate'
+    ]
+
+    for before_after in before_after_filtering:
+        for metric in metrics:
+            summary[f'{metric}_{before_after}'] = parsed_fastp['summary'][before_after][metric]
 
     return summary
     
@@ -53,7 +57,13 @@ def main(args):
         "q30_rate_after_filtering",
     ]
     
-    writer = csv.DictWriter(sys.stdout, fieldnames=output_fields, dialect='excel-tab')
+    writer = csv.DictWriter(
+        sys.stdout,
+        fieldnames=output_fields,
+        dialect='unix',
+        quoting=csv.QUOTE_MINIMAL,
+        extrasaction='ignore'
+    )
     writer.writeheader()
     writer.writerow(output_data)
 
