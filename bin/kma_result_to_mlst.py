@@ -117,7 +117,14 @@ def main(args):
 
     with open(args.output, 'w') as f:
         fieldnames = ['sample_id'] + all_loci
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(
+            f,
+            fieldnames=fieldnames,
+            dialect='unix',
+            quoting=csv.QUOTE_MINIMAL,
+            extrasaction='ignore',
+            lineterminator='\n'
+        )
         writer.writeheader()
         writer.writerow(mlst_output)
         
