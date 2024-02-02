@@ -1,5 +1,16 @@
 # KMA-cgMLST
 
+```mermaid
+flowchart TD
+fastq[fastq]
+scheme[scheme]
+fastq --> fastp(fastp)
+fastp -- trimmed_fastq --> kma_align(kma_align)
+scheme --> kma_align
+kma_align -- alignment_results --> kma_result_to_mlst(kma_result_to_mlst)
+kma_result_to_mlst -- mlst --> count_called_alleles(count_called_alleles)
+```
+
 ## Usage
 
 ### Preparing your cgMLST scheme
