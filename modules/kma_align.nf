@@ -10,9 +10,28 @@ process kma_align {
     output:
     tuple val(sample_id), path("${sample_id}_kma.csv"), emit: res
     tuple val(sample_id), path("${sample_id}_kma_mapstat.tsv"), emit: mapstat
+    tuple val(sample_id), path("${sample_id}_kma_align_provenance.yml"), emit: provenance
 
     script:
     """
+    printf -- "- process_name: kma_align\\n"       >> ${sample_id}_kma_align_provenance.yml
+    printf -- "  tools:\\n"                        >> ${sample_id}_kma_align_provenance.yml
+    printf -- "    - tool_name: kma\\n"            >> ${sample_id}_kma_align_provenance.yml
+    printf -- "      tool_version: \$(kma -v 2>&1 | cut -d '-' -f 2)\\n" >> ${sample_id}_kma_align_provenance.yml
+    printf -- "      parameters:\\n"               >> ${sample_id}_kma_align_provenance.yml
+    printf -- "        - parameter: -ef\\n"        >> ${sample_id}_kma_align_provenance.yml
+    printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
+    printf -- "        - parameter: -cge\\n"       >> ${sample_id}_kma_align_provenance.yml
+    printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
+    printf -- "        - parameter: -boot\\n"      >> ${sample_id}_kma_align_provenance.yml
+    printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
+    printf -- "        - parameter: -1t1\\n"       >> ${sample_id}_kma_align_provenance.yml
+    printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
+    printf -- "        - parameter: -mem_mode\\n"  >> ${sample_id}_kma_align_provenance.yml
+    printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
+    printf -- "        - parameter: -and\\n"       >> ${sample_id}_kma_align_provenance.yml
+    printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
+    
     ln -s ${scheme}.comp.b .
     ln -s ${scheme}.length.b .
     ln -s ${scheme}.name .
