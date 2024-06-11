@@ -5,7 +5,9 @@ nextflow.enable.dsl = 2
 
 include { hash_files }                   from './modules/hash_files.nf'
 include { fastp }                        from './modules/fastp.nf'
+include { fastp_nano }                   from './modules/fastp.nf'
 include { kma_align }                    from './modules/kma_align.nf'
+include { kma_align_nano }               from './modules/kma_align.nf'
 include { kma_result_to_mlst }           from './modules/kma_result_to_mlst.nf'
 include { count_called_alleles }         from './modules/count_called_alleles.nf'
 include { pipeline_provenance }          from './modules/provenance.nf'
