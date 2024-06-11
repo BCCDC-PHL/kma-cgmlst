@@ -40,7 +40,7 @@ workflow {
     ch_scheme = Channel.fromPath( "${params.scheme}")
     
     main:
-
+    
     if (params.nanopore){
 
         hash_files(ch_fastq.map{ it -> [it[0], [it[1]]] }.combine(Channel.of("fastq-input")))
@@ -53,13 +53,13 @@ workflow {
 
     } else {
 
-    hash_files(ch_fastq.map{ it -> [it[0], [it[1], it[2]]] }.combine(Channel.of("fastq-input")))
+        hash_files(ch_fastq.map{ it -> [it[0], [it[1], it[2]]] }.combine(Channel.of("fastq-input")))
 
-    fastp(ch_fastq)
+        fastp(ch_fastq)
 
-    kma_align(fastp.out.trimmed_reads.combine(ch_scheme))
+        kma_align(fastp.out.trimmed_reads.combine(ch_scheme))
 
-    kma_result_to_mlst(kma_align.out.res.combine(ch_scheme))
+        kma_result_to_mlst(kma_align.out.res.combine(ch_scheme))
 
     }
 
@@ -70,12 +70,12 @@ workflow {
         if (params.nanopore){
             fastp_nano.out.csv.map{ it -> it[1] }.collectFile(name: params.collected_outputs_prefix + "_fastp.csv", storeDir: params.outdir, keepHeader: true, sort: { it -> it.readLines()[1].split(',')[0] })
         } else {
-	fastp.out.csv.map{ it -> it[1] }.collectFile(name: params.collected_outputs_prefix + "_fastp.csv", storeDir: params.outdir, keepHeader: true, sort: { it -> it.readLines()[1].split(',')[0] })
+	        fastp.out.csv.map{ it -> it[1] }.collectFile(name: params.collected_outputs_prefix + "_fastp.csv", storeDir: params.outdir, keepHeader: true, sort: { it -> it.readLines()[1].split(',')[0] })
         }
 
-	count_called_alleles.out.map{ it -> it[1] }.collectFile(name: params.collected_outputs_prefix + "_called_allele_count.csv", storeDir: params.outdir, keepHeader: true, sort: { it -> it.readLines()[1].split(',')[0] })
+	    count_called_alleles.out.map{ it -> it[1] }.collectFile(name: params.collected_outputs_prefix + "_called_allele_count.csv", storeDir: params.outdir, keepHeader: true, sort: { it -> it.readLines()[1].split(',')[0] })
 
-	kma_result_to_mlst.out.mlst.map{ it -> it[1] }.collectFile(name: params.collected_outputs_prefix + "_cgmlst.csv", storeDir: params.outdir, keepHeader: true, sort: { it -> it.readLines()[1].split(',')[0] })
+	    kma_result_to_mlst.out.mlst.map{ it -> it[1] }.collectFile(name: params.collected_outputs_prefix + "_cgmlst.csv", storeDir: params.outdir, keepHeader: true, sort: { it -> it.readLines()[1].split(',')[0] })
     }
 
     // Collect Provenance
@@ -94,10 +94,10 @@ workflow {
         .view()
     } else {
         ch_provenance = ch_provenance.join(hash_files.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
-    ch_provenance = ch_provenance.join(fastp.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
-    ch_provenance = ch_provenance.join(kma_align.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+        ch_provenance = ch_provenance.join(fastp.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+        ch_provenance = ch_provenance.join(kma_align.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     }
 
     collect_provenance(ch_provenance)
-}
+    }
 
