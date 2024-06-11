@@ -29,7 +29,9 @@ workflow {
 
     if (params.samplesheet_input != 'NO_FILE') {
 	ch_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], it['R1'], it['R2']] }
-    } else {
+    } else if (params.nanopore){
+    ch_fastq = Channel.fromPath(params.fastq_search_path).map{ tuple( it.baseName.split('\\.f')[0], it ) }
+    }else{
 	ch_fastq = Channel.fromFilePairs( params.fastq_search_path, flat: true ).map{ it -> [it[0].split('_')[0], it[1], it[2]] }.unique{ it -> it[0] }
     }
 
