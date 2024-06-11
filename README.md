@@ -34,7 +34,7 @@ kma index -i <your_scheme.fa> -o <your_scheme>
 
 ```
 nextflow run BCCDC-PHL/kma-cgmlst \
-  --nanopore <optional>
+  [--nanopore] \
   --fastq_input </path/to/fastqs> \
   [--min_identity <min_percent_identity>] \
   [--min_coverage <min_percent_coverage>] \
@@ -44,7 +44,7 @@ nextflow run BCCDC-PHL/kma-cgmlst \
 
 The `--min_identity` and `--min_coverage` flags can be used to control the identity and coverage thresholds that are used to call an allele. They both default to 100% if the flags are omitted.
 
-The `--nanopore` flag may be activated to process basecalled signal data ('.fastq.gz', '.fq.gz', '.fastq', '.fq').
+The `--nanopore` flag may be optionally activated to process basecalled signal data ('.fastq.gz', '.fq.gz', '.fastq', '.fq').
 
 Alternatively, a `samplesheet.csv` file can be provided, with fields: `ID`,`R1`,`R2`:
 
@@ -103,6 +103,7 @@ For example, the following command:
 
 ```
 nextflow run BCCDC-PHL/kma-cgmlst \
+  [--nanopore] \
   --fastq_input </path/to/fastqs> \
   --scheme </path/to/cgmlst_scheme> \
   --collect_outputs \
