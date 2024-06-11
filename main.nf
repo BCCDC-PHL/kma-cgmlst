@@ -41,6 +41,18 @@ workflow {
     
     main:
 
+    if (params.nanopore){
+
+        hash_files(ch_fastq.map{ it -> [it[0], [it[1]]] }.combine(Channel.of("fastq-input")))
+
+        fastp_nano(ch_fastq)
+
+        kma_align_nano(fastp_nano.out.trimmed_reads.combine(ch_scheme))
+
+        kma_result_to_mlst(kma_align_nano.out.res.combine(ch_scheme))
+
+    } else {
+
     hash_files(ch_fastq.map{ it -> [it[0], [it[1], it[2]]] }.combine(Channel.of("fastq-input")))
 
     fastp(ch_fastq)
@@ -48,6 +60,8 @@ workflow {
     kma_align(fastp.out.trimmed_reads.combine(ch_scheme))
 
     kma_result_to_mlst(kma_align.out.res.combine(ch_scheme))
+
+    }
 
     count_called_alleles(kma_result_to_mlst.out.mlst)
 
