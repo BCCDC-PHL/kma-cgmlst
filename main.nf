@@ -88,8 +88,16 @@ workflow {
     ch_pipeline_provenance = pipeline_provenance(ch_workflow_metadata)
     ch_provenance = ch_provenance.combine(ch_pipeline_provenance).map{ it -> [it[0], [it[1]]] }
     ch_provenance = ch_provenance.join(hash_files.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    if (params.nanopore){
+        ch_provenance = ch_provenance.join(fastp_nano.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+        ch_provenance = ch_provenance.join(kma_align_nano.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+        .view()
+    } else {
+        ch_provenance = ch_provenance.join(hash_files.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     ch_provenance = ch_provenance.join(fastp.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
     ch_provenance = ch_provenance.join(kma_align.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    }
 
     collect_provenance(ch_provenance)
 }
+
