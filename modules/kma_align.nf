@@ -1,3 +1,6 @@
+import nextflow.util.BlankSeparatedList
+import nextflow.processor.TaskPath
+
 process kma_align {
 
     tag { sample_id }
@@ -5,7 +8,7 @@ process kma_align {
     publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_kma*.{c,t}sv", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(read_1), path(read_2), val(scheme)
+    tuple val(sample_id), path(reads), val(scheme)
 
     output:
     tuple val(sample_id), path("${sample_id}_kma.csv"), emit: res
@@ -13,6 +16,7 @@ process kma_align {
     tuple val(sample_id), path("${sample_id}_kma_align_provenance.yml"), emit: provenance
 
     script:
+    reads_input = (reads instanceof nextflow.processor.TaskPath) ? "-i ${reads[0]}" : "-ipe ${reads[0]} ${reads[1]}"
     """
     printf -- "- process_name: kma_align\\n"       >> ${sample_id}_kma_align_provenance.yml
     printf -- "  tools:\\n"                        >> ${sample_id}_kma_align_provenance.yml
@@ -31,24 +35,24 @@ process kma_align {
     printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
     printf -- "        - parameter: -and\\n"       >> ${sample_id}_kma_align_provenance.yml
     printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
-    
-    ln -s ${scheme}.comp.b .
-    ln -s ${scheme}.length.b .
-    ln -s ${scheme}.name .
-    ln -s ${scheme}.seq.b .
+
+    # ln -s ${scheme}.comp.b .
+    # ln -s ${scheme}.length.b .
+    # ln -s ${scheme}.name .
+    # ln -s ${scheme}.seq.b .
     
     kma \
-      -t ${task.cpus} \
-      -ef \
-      -cge \
-      -boot \
-      -1t1 \
-      -mem_mode \
-      -and \
-      -o ${sample_id}.kma \
-      -t_db ${scheme} \
-      -ipe ${read_1} ${read_2} \
-      -tmp .
+	-t ${task.cpus} \
+	-ef \
+	-cge \
+	-boot \
+	-1t1 \
+	-mem_mode \
+	-and \
+	-o ${sample_id}.kma \
+	-t_db ${scheme} \
+	${reads_input} \
+	-tmp .
 
     head -n 1 ${sample_id}.kma.res | tr -d '#' | awk '{print tolower(\$0)}' | tr \$'\\t' ',' > ${sample_id}_kma.csv
     tail -qn+2 ${sample_id}.kma.res | tr -d ' ' | tr \$'\\t' ',' >> ${sample_id}_kma.csv
