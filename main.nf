@@ -81,10 +81,22 @@ workflow {
     // At each step, we add another provenance file to the list using the << operator...
     // ...and then concatenate them all together in the 'collect_provenance' process.
     ch_provenance = ch_sample_ids
+
     ch_pipeline_provenance = pipeline_provenance(ch_workflow_metadata)
+
     ch_provenance = ch_provenance.combine(ch_pipeline_provenance).map{ it -> [it[0], [it[1]]] }
-    ch_provenance = ch_provenance.join(hash_fastq_short.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
-    ch_provenance = ch_provenance.join(fastp.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    
+    ch_provenance_short = ch_provenance.join(hash_fastq_short.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    ch_provenance_short = ch_provenance_short.join(fastp.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+
+    ch_provenance_long = ch_provenance.join(hash_fastq_long.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    ch_provenance_long = ch_provenance_long.join(nanoq_pre_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    ch_provenance_long = ch_provenance_long.join(filtlong.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    ch_provenance_long = ch_provenance_long.join(nanoq_post_filter.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
+    
+    ch_provenance = ch_provenance_short.mix(ch_provenance_long)
+
+    //process common to both long and short read streams
     ch_provenance = ch_provenance.join(kma_align.out.provenance).map{ it -> [it[0], it[1] << it[2]] }
 
     collect_provenance(ch_provenance)
