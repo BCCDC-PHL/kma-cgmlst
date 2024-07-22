@@ -73,11 +73,12 @@ For each sample, the following outputs are produced:
 ├── SAMPLE-ID_YYYYMMDDHHmmss_provenance.yml
 ├── SAMPLE-ID_called_allele_count.csv
 ├── SAMPLE-ID_cgmlst.csv
-├── SAMPLE-ID_fastp.csv
-├── SAMPLE-ID_fastp.json
+├── SAMPLE-ID_fastp.csv [short read]
+├── SAMPLE-ID_fastp.json [short read]
 ├── SAMPLE-ID_kma.csv
 ├── SAMPLE-ID_kma_mapstat.tsv
-└── SAMPLE-ID_locus_qc.csv
+├── SAMPLE-ID_locus_qc.csv
+└── SAMPLE-ID_nanoq.csv [long read]
 ```
 
 
@@ -90,7 +91,7 @@ added to the top-level of the output directory (`--outdir`):
 .
 ├── collected_called_allele_count.csv
 ├── collected_cgmlst.csv
-└── collected_fastp.csv
+└── collected_fastp.csv [short read]
 ```
 
 The prefix of the filenames of the collected outputs can be controlled using
@@ -155,6 +156,8 @@ following format:
           value: null
         - parameter: -mem_mode
           value: null
+        - parameter: -t_db
+          value: /path/to/scheme/used
         - parameter: -and
           value: null
 ```
