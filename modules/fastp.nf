@@ -5,10 +5,10 @@ process fastp {
     publishDir "${params.outdir}/${sample_id}", mode: 'copy', pattern: "${sample_id}_fastp.{json,csv}"
 
     input:
-    tuple val(sample_id), path(reads_1), path(reads_2)
+    tuple val(sample_id), path(reads)
 
     output:
-    tuple val(sample_id), path("${sample_id}_R1.trim.fastq.gz"), path("${sample_id}_R2.trim.fastq.gz"), emit: trimmed_reads
+    tuple val(sample_id), path("${sample_id}_R*.trim.fastq.gz"), emit: trimmed_reads
     tuple val(sample_id), path("${sample_id}_fastp.json"), emit: json
     tuple val(sample_id), path("${sample_id}_fastp.csv"), emit: csv
     tuple val(sample_id), path("${sample_id}_fastp_provenance.yml"), emit: provenance
@@ -24,17 +24,17 @@ process fastp {
     printf -- "          value: null\\n"           >> ${sample_id}_fastp_provenance.yml
 
     fastp \
-      -t ${task.cpus} \
-      --cut_tail \
-      -i ${reads_1} \
-      -I ${reads_2} \
-      -o ${sample_id}_R1.trim.fastq.gz \
-      -O ${sample_id}_R2.trim.fastq.gz \
-      -j ${sample_id}_fastp.json
+	-t ${task.cpus} \
+	--cut_tail \
+	-i ${reads[0]} \
+	-I ${reads[1]} \
+	-o ${sample_id}_R1.trim.fastq.gz \
+	-O ${sample_id}_R2.trim.fastq.gz \
+	-j ${sample_id}_fastp.json
 
     parse_fastp_json.py \
-      --fastp_json ${sample_id}_fastp.json \
-      --sample_id "${sample_id}" \
-      > ${sample_id}_fastp.csv
+	--fastp_json ${sample_id}_fastp.json \
+	--sample_id "${sample_id}" \
+	> ${sample_id}_fastp.csv
     """
 }
