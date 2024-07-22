@@ -33,6 +33,8 @@ process kma_align {
     printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
     printf -- "        - parameter: -mem_mode\\n"  >> ${sample_id}_kma_align_provenance.yml
     printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
+    printf -- "        - parameter: -t_db\\n"      >> ${sample_id}_kma_align_provenance.yml
+    printf -- "          value: ${scheme}\\n"      >> ${sample_id}_kma_align_provenance.yml
     printf -- "        - parameter: -and\\n"       >> ${sample_id}_kma_align_provenance.yml
     printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
 
