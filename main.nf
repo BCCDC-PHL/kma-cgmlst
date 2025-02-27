@@ -61,7 +61,7 @@ workflow {
 
     trimmed_reads = fastp.out.trimmed_reads.mix(filtlong.out.filtered_reads.map{ it -> [it[0], [it[1]]] })
     
-    kma_align(trimmed_reads.combine(ch_scheme).view())
+    kma_align(trimmed_reads.combine(ch_scheme))
 
     kma_result_to_mlst(kma_align.out.res.combine(ch_scheme))
 
