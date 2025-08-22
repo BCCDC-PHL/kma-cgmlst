@@ -33,7 +33,7 @@ workflow {
 
     if (params.samplesheet_input != 'NO_FILE') {
 	ch_illumina_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['R1'], it['R2']]] }
-	ch_nanopore_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['LONG']]] }.filter{ it -> it[1] != null }
+    ch_nanopore_fastq = Channel.fromPath(params.samplesheet_input).splitCsv(header: true).map{ it -> [it['ID'], [it['LONG']]] }.filter{ it -> it[1][0] != null }
     } else {
 	ch_illumina_fastq = Channel.fromFilePairs( params.fastq_illumina_search_path, flat: true ).map{ it -> [it[0].split('_')[0], [it[1], it[2]]] }.unique{ it -> it[0] }
 	ch_nanopore_fastq = Channel.fromPath( params.fastq_nanopore_search_path ).map{ it -> [it.getName().split('_')[0], [it]] }.unique{ it -> it[0] }
