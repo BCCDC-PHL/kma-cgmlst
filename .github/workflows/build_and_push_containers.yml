@@ -2,6 +2,8 @@ name: Build and Push Container Images
 
 on:
   push:
+    branches:
+      - add-apptainer-profile
     tags:
       - v*
   workflow_dispatch:
