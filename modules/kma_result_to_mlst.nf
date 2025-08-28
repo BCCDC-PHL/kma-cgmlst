@@ -6,7 +6,7 @@ process kma_result_to_mlst {
     publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_{cgmlst,locus_qc}.csv", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(kma_result), val(scheme)
+    tuple val(sample_id), path(kma_result), path(schemeName)
 
     output:
     tuple val(sample_id), path("${sample_id}_cgmlst.csv"), emit: mlst
@@ -14,10 +14,10 @@ process kma_result_to_mlst {
     
     script:
     """
-    ln -s ${scheme}.name .
+   
     kma_result_to_mlst.py \
       "${kma_result}" \
-      --alleles ${scheme}.name \
+      --alleles "${schemeName}" \
       --sample-id "${sample_id}" \
       --locus-allele-delimiter "_" \
       --min-identity ${params.min_identity} \
