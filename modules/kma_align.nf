@@ -8,7 +8,7 @@ process kma_align {
     publishDir "${params.outdir}/${sample_id}", pattern: "${sample_id}_kma*.{c,t}sv", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(reads), val(scheme)
+    tuple val(sample_id), path(reads), val(scheme), path(schemeFiles)
 
     output:
     tuple val(sample_id), path("${sample_id}_kma.csv"), emit: res
@@ -37,11 +37,6 @@ process kma_align {
     printf -- "          value: ${scheme}\\n"      >> ${sample_id}_kma_align_provenance.yml
     printf -- "        - parameter: -and\\n"       >> ${sample_id}_kma_align_provenance.yml
     printf -- "          value: null\\n"           >> ${sample_id}_kma_align_provenance.yml
-
-    # ln -s ${scheme}.comp.b .
-    # ln -s ${scheme}.length.b .
-    # ln -s ${scheme}.name .
-    # ln -s ${scheme}.seq.b .
     
     kma \
 	-t ${task.cpus} \

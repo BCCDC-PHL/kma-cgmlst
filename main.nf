@@ -39,7 +39,21 @@ workflow {
 	ch_nanopore_fastq = Channel.fromPath( params.fastq_nanopore_search_path ).map{ it -> [it.getName().split('_')[0], [it]] }.unique{ it -> it[0] }
     }
 
+
     ch_scheme = Channel.fromPath( "${params.scheme}")
+    // when using apptainer profile, need to pass all scheme files as channel
+    schemePath = new File(params.scheme).getAbsolutePath()
+    schemeDir    = new File(schemePath).getParentFile()
+    schemePrefix = new File(schemePath).getName()
+
+    schemeFiles = []
+    schemeDir.eachFileMatch( ~/${schemePrefix}\.comp\.b|${schemePrefix}\.length\.b|${schemePrefix}\.name|${schemePrefix}\.seq\.b/ ) { schemeFiles << it }
+
+    ch_schemeFiles = Channel.fromPath(schemeFiles).collect().toList()
+
+    schemeNameFile = schemeDir.listFiles().find { it.name == "${schemePrefix}.name" }
+    ch_schemeName  = Channel.fromPath(schemeNameFile)
+
     
     main:
     ch_illumina_sample_ids = ch_illumina_fastq.map{ it -> it[0] }
@@ -61,9 +75,9 @@ workflow {
 
     trimmed_reads = fastp.out.trimmed_reads.mix(filtlong.out.filtered_reads.map{ it -> [it[0], [it[1]]] })
     
-    kma_align(trimmed_reads.combine(ch_scheme))
+    kma_align(trimmed_reads.combine(ch_scheme).combine(ch_schemeFiles))
 
-    kma_result_to_mlst(kma_align.out.res.combine(ch_scheme))
+    kma_result_to_mlst(kma_align.out.res.combine(ch_schemeName))
 
     count_called_alleles(kma_result_to_mlst.out.mlst)
 
